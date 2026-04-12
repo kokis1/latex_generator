@@ -19,9 +19,10 @@ class VLMClient:
         self.check_model_available()
 
     def check_model_available(self) -> None:
-        """Fail fast if the model isn't pulled yet — saves a confusing error later."""
         available = [m.model for m in ollama.list().models]
-        if self.model not in available:
+        # Ollama appends ':latest' if no tag is specified, so normalise both sides
+        available_stems = [name.split(":")[0] for name in available]
+        if self.model.split(":")[0] not in available_stems:
             raise RuntimeError(
                 f"Model '{self.model}' not found. "
                 f"Run: ollama pull {self.model}\n"

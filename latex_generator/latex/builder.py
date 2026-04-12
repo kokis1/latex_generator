@@ -1,8 +1,31 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-
 from latex_generator.latex.templates import build_full_document
+import re
 
+def sanitise_fragment(fragment: str) -> str:
+    """
+    Strip any preamble or document environment tags the model
+    outputs despite instructions. Operates line by line.
+    """
+    # Patterns that must never appear in a body fragment
+    forbidden_starts = (
+        r"\documentclass",
+        r"\usepackage",
+        r"\begin{document}",
+        r"\end{document}",
+        r"\maketitle",
+        r"\title",
+        r"\author",
+        r"\date",
+    )
+    clean_lines = []
+    for line in fragment.splitlines():
+        stripped = line.strip()
+        if any(stripped.startswith(p) for p in forbidden_starts):
+            continue
+        clean_lines.append(line)
+    return "\n".join(clean_lines).strip()
 
 @dataclass
 class DocumentBuilder:
@@ -25,7 +48,7 @@ class DocumentBuilder:
 
     def append(self, fragment: str, chunk_index: int) -> None:
         """Add a successfully validated fragment to the document."""
-        cleaned = fragment.strip()
+        cleaned = sanitise_fragment(fragment.strip())
         if cleaned:
             self.fragments.append(cleaned)
 

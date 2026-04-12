@@ -70,7 +70,7 @@ def save_chunks(chunks: list[Chunk], output_dir: Path) -> list[Path]:
    output_dir.mkdir(parents=True, exist_ok=True)
    paths = []
    for chunk in chunks:
-      path = output_dir / f"chunk_{chunk.index::03d}.png"
+      path = output_dir / f"chunk_{chunk.index}.png"
       cv2.imwrite(str(path), chunk.image)
       paths.append(path)
    return paths

@@ -5,7 +5,6 @@ from pathlib import Path
 def load_grayscale(image_path: str | Path) -> np.ndarray:
    '''Loads the image as a grayscale from the path'''
    image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
-   assert image != None, f"Image not found at the path {image_path}"
    return image
 
 def binarise(image: np.ndarray) -> np.ndarray:

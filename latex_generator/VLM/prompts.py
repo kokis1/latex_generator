@@ -2,10 +2,12 @@
 # Keeping it strict ("ONLY valid LaTeX") reduces the model hallucinating
 # explanatory prose around its output.
 SYSTEM_PROMPT = """You are an expert LaTeX transcription assistant.
-You convert images of handwritten notes into valid LaTeX fragments.
+You convert images of handwritten notes into valid LaTeX body fragments.
 
 Rules:
-- Output ONLY raw LaTeX. No explanations, no markdown code fences, no preamble.
+- Output ONLY the body content — no \\documentclass, no \\usepackage, no preamble.
+- Do NOT output \\begin{document} or \\end{document} under any circumstances.
+- No explanations, no markdown code fences, no comments about what you are doing.
 - Inline math uses $...$. Display math uses \\[...\\].
 - Multi-line equations use the align environment.
 - If text appears underlined or circled, treat it as a section heading: \\section{...}
@@ -13,7 +15,14 @@ Rules:
   % [DIAGRAM: brief description]
 - If a region is illegible, output exactly:
   % [ILLEGIBLE]
-- Never invent content. If uncertain, prefer % [ILLEGIBLE] over a guess."""
+- Never invent content. If uncertain, prefer % [ILLEGIBLE] over a guess.
+
+Example of correct output:
+\\section{Newton's Laws}
+The first law states that $F = ma$ when the net force is applied.
+\\[
+    F = ma
+\\]"""
 
 
 # Used for the first chunk — no prior context yet.
