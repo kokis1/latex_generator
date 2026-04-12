@@ -1,0 +1,10 @@
+[project]
+name = "latex_generator"
+version = "0.1.0"
+requires-python = ">=3.11"
+
+[project.scripts]
+latex_generator = "latex_generator.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]

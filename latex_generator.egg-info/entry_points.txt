@@ -1,0 +1,2 @@
+[console_scripts]
+latex_generator = latex_generator.cli:main
