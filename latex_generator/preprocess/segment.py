@@ -81,5 +81,3 @@ def segment(image: np.ndarray, max_chunks: int = 10) -> list[Chunk]:
       Falls back to equally spaced strips if none are detected.'''
    split_points = find_whitespace_splits(image, max_chunks)
    return crop_chunks(image, split_points)
-
-
