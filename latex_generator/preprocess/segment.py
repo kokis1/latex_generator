@@ -85,8 +85,16 @@ def save_chunks(chunks: list[Chunk], output_dir: Path) -> list[Path]:
    return paths
 
 
-def segment(image: np.ndarray, max_chunks: int = 10) -> list[Chunk]:
+"""def segment(image: np.ndarray, max_chunks: int = 10) -> list[Chunk]:
    '''Splits the file into horizontal strips using whitespace detection.
       Falls back to equally spaced strips if none are detected.'''
    split_points = find_whitespace_splits(image, max_chunks)
-   return crop_chunks(image, split_points)
+   return crop_chunks(image, split_points)"""
+
+def segment(img: np.ndarray, max_chunks: int = 10) -> list[Chunk]:
+    """
+    Split into equal horizontal strips. Simple and reliable for a first pass.
+    """
+    h = img.shape[0]
+    split_points = equal_splits(h, max_chunks)
+    return crop_chunks(img, split_points)
