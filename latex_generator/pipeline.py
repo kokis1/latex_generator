@@ -95,41 +95,27 @@ def convert_chunk(
     builder: DocumentBuilder,
     max_retries: int,
 ) -> tuple[str | None, str]:
-    """
-    Attempts to convert a single chunk with up to max_retries attempts.
-
-    Returns (fragment, "") on success, or (None, last_error) on failure.
-
-    The retry logic has two modes:
-      - First attempt: standard transcription with document context
-      - Subsequent attempts: correction mode, feeding the compiler
-        error back to the VLM alongside the failed fragment
-    """
     last_error = ""
     last_fragment = ""
 
     for attempt in range(max_retries):
         if attempt == 0:
-            # Standard transcription — give the model context of
-            # what has been accumulated so far
             fragment = client.transcribe(
                 image=chunk.image,
                 context=builder.body,
             )
         else:
-            # Correction mode — give the model the fragment that
-            # failed and the compiler error that resulted
-            logger.debug(
-                f"  Retry {attempt}/{max_retries - 1} "
-                f"with error: {last_error}"
-            )
             fragment = client.transcribe(
                 image=chunk.image,
                 context=last_fragment,
                 error=last_error,
             )
 
-        # Validate by compiling the fragment in context
+        # ADD THIS — lets us see exactly what the model returns
+        logger.debug(f"--- RAW VLM OUTPUT (chunk {chunk.index}, attempt {attempt}) ---")
+        logger.debug(fragment)
+        logger.debug(f"--- END RAW OUTPUT ---")
+
         candidate = builder.body + "\n\n" + fragment
         result = compile(build_full_document(candidate))
 
@@ -138,6 +124,11 @@ def convert_chunk(
 
         last_fragment = fragment
         last_error = result.first_error()
+
+        # ADD THIS — lets us see the compiler error clearly
+        logger.debug(f"--- COMPILER ERROR ---")
+        logger.debug(last_error)
+        logger.debug(f"--- END COMPILER ERROR ---")
 
     return None, last_error
 

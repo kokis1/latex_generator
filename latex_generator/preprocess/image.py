@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-def load_grayscale(image_path: str | Path) -> np.ndarray:
+'''def load_grayscale(image_path: str | Path) -> np.ndarray:
    '''Loads the image as a grayscale from the path'''
    image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
    return image
@@ -63,4 +63,24 @@ def load_and_clean(image_path: str | Path, save_image_path: None | str | Path = 
    if save_image_path != None:
       save_debug(image, save_image_path)
 
-   return image
+   return image'''
+
+def load_and_clean(image_path: str | Path) -> np.ndarray:
+    """
+    Minimal preprocessing — keep the image as close to the original
+    as possible so the VLM can read it. We can add more aggressive
+    preprocessing later once we confirm the VLM can see the content.
+    """
+    img = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
+    if img is None:
+        raise ValueError(f"Could not load image at {image_path}")
+
+    # Resize if very large — VLMs don't benefit from huge images
+    # and it slows down inference significantly
+    max_dimension = 1600
+    h, w = img.shape[:2]
+    if max(h, w) > max_dimension:
+        scale = max_dimension / max(h, w)
+        img = cv2.resize(img, (int(w * scale), int(h * scale)))
+
+    return img
