@@ -71,7 +71,7 @@ def crop_chunks(image: np.ndarray, split_points: list[tuple[int, int]]) -> list[
       if bottom - top < 10:
          continue
       cropped = image[top:bottom, :]
-      chunks.append(Chunk(index=1, image=cropped, top=top, bottom=bottom))
+      chunks.append(Chunk(index=i, image=cropped, top=top, bottom=bottom))
    return chunks
 
 def save_chunks(chunks: list[Chunk], output_dir: Path) -> list[Path]:

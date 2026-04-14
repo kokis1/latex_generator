@@ -50,6 +50,49 @@ def check_dependencies(model: str) -> None:
             "Run: pip install ollama"
         )
 
+def convert_chunk(
+    chunk,
+    client: VLMClient,
+    builder: DocumentBuilder,
+    max_retries: int,
+) -> tuple[str | None, str]:
+    last_error = ""
+    last_fragment = ""
+
+    for attempt in range(max_retries):
+        if attempt == 0:
+            fragment = client.transcribe(
+                image=chunk.image,
+                context=builder.body,
+            )
+        else:
+            fragment = client.transcribe(
+                image=chunk.image,
+                context=last_fragment,
+                error=last_error,
+            )
+
+        # ADD THIS — lets us see exactly what the model returns
+        logger.debug(f"--- RAW VLM OUTPUT (chunk {chunk.index}, attempt {attempt}) ---")
+        logger.debug(fragment)
+        logger.debug(f"--- END RAW OUTPUT ---")
+
+        candidate = builder.body + "\n\n" + fragment
+        result = compile(build_full_document(candidate))
+
+        if result.ok:
+            return fragment, ""
+
+        last_fragment = fragment
+        last_error = result.first_error()
+
+        # ADD THIS — lets us see the compiler error clearly
+        logger.debug(f"--- COMPILER ERROR ---")
+        logger.debug(last_error)
+        logger.debug(f"--- END COMPILER ERROR ---")
+
+    return None, last_error
+
 
 def run(
     image_path: str | Path,
@@ -109,47 +152,3 @@ def run(
         success=not builder.failed_chunks,
         summary=summary,
     )
-
-
-def convert_chunk(
-    chunk,
-    client: VLMClient,
-    builder: DocumentBuilder,
-    max_retries: int,
-) -> tuple[str | None, str]:
-    last_error = ""
-    last_fragment = ""
-
-    for attempt in range(max_retries):
-        if attempt == 0:
-            fragment = client.transcribe(
-                image=chunk.image,
-                context=builder.body,
-            )
-        else:
-            fragment = client.transcribe(
-                image=chunk.image,
-                context=last_fragment,
-                error=last_error,
-            )
-
-        # ADD THIS — lets us see exactly what the model returns
-        logger.debug(f"--- RAW VLM OUTPUT (chunk {chunk.index}, attempt {attempt}) ---")
-        logger.debug(fragment)
-        logger.debug(f"--- END RAW OUTPUT ---")
-
-        candidate = builder.body + "\n\n" + fragment
-        result = compile(build_full_document(candidate))
-
-        if result.ok:
-            return fragment, ""
-
-        last_fragment = fragment
-        last_error = result.first_error()
-
-        # ADD THIS — lets us see the compiler error clearly
-        logger.debug(f"--- COMPILER ERROR ---")
-        logger.debug(last_error)
-        logger.debug(f"--- END COMPILER ERROR ---")
-
-    return None, last_error
