@@ -50,8 +50,8 @@ examples:
     parser.add_argument(
         "--chunks", "-c",
         type=int,
-        default=20,
-        help="Max number of segments to split the image into (default: 20)",
+        default=10,
+        help="Max number of segments to split the image into (default: 10)",
     )
     parser.add_argument(
         "--debug", "-d",

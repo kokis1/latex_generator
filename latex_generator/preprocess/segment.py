@@ -18,17 +18,15 @@ def equal_splits(height: int, n: int) -> list[tuple[int, int]]:
 def find_whitespace_splits(image: np.ndarray, max_chunks: int) -> list[tuple[int, int]]:
    '''Projects the pixel darkness onto the y-axis and finds the lines that are almost completely white.
       These provide natural points to chunk the text.'''
-   '''# row_darkness[i] = number of dark pixels in row i
-   row_darkness = np.sum(image < 128, axis=1)
-   h = image.shape[0]'''
 
-   # Convert to grayscale for projection if colour image
+   '''# Convert to grayscale for projection if colour image
    if len(image.shape) == 3:
       grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
    else:
-      grey = image
-
-   row_darkness = np.sum(grey < 200, axis=1)
+      grey = image'''
+  
+   # row_darkness[i] = number of dark pixels in row i
+   row_darkness = np.sum(image < 128, axis=1)
    h = image.shape[0]
 
    # A row counts as whitespace if it has very few dark pixels
@@ -97,5 +95,5 @@ def segment(img: np.ndarray, max_chunks: int = 10) -> list[Chunk]:
     """
     h = img.shape[0]
     #split_points = equal_splits(h, max_chunks)
-    split_points = find_whitespace_splits(h, max_chunks)
+    split_points = find_whitespace_splits(img, max_chunks)
     return crop_chunks(img, split_points)
