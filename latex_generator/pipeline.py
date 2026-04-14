@@ -77,7 +77,7 @@ def convert_chunk(
         logger.debug(fragment)
         logger.debug(f"--- END RAW OUTPUT ---")
 
-        candidate = builder.body + "\n\n" + fragment
+        candidate = builder.body + "\n" + fragment
         result = compile(build_full_document(candidate))
 
         if result.ok:
