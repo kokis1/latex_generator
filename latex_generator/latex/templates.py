@@ -21,10 +21,13 @@ DOCUMENT_END = r"\end{document}"
 
 def build_full_document(body: str) -> str:
     """Assembles a complete compilable .tex string from a body fragment."""
-    return "\n".join([
+    text = "\n".join([
         PREAMBLE,
         DOCUMENT_BEGIN,
         DOCUMENT_MAKETITLE,
         body,
         DOCUMENT_END,
     ])
+
+    print(f"the text that was attempted to compile was: \n {text}")
+    return text
