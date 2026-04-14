@@ -78,7 +78,13 @@ def convert_chunk(
         logger.debug(f"--- END RAW OUTPUT ---")
 
         candidate = builder.body + "\n" + fragment
-        result = compile(build_full_document(candidate))
+        text = build_full_document(candidate)
+
+        logger.debug("--- ATTEMPTING TO COMPILE: ---")
+        logger.debug(text)
+        logger.debug("--- END OF ATTEMPTED COMPILE ---")
+
+        result = compile(text)
 
         if result.ok:
             return fragment, ""

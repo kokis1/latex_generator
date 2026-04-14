@@ -23,8 +23,8 @@ def build_full_document(body: str) -> str:
     """Assembles a complete compilable .tex string from a body fragment."""
     text = "\n".join([
         PREAMBLE,
-        DOCUMENT_MAKETITLE,
         DOCUMENT_BEGIN,
+        DOCUMENT_MAKETITLE,
         body,
         DOCUMENT_END,
     ])
