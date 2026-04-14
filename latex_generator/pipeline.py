@@ -28,6 +28,28 @@ class PipelineResult:
     success: bool
     summary: str
 
+def check_dependencies(model: str) -> None:
+    """
+    Validates that all external tools are present before starting.
+    Raises clearly rather than failing mid-conversion.
+    """
+    if not is_pdflatex_available():
+        raise RuntimeError(
+            "pdflatex not found on PATH. "
+            "Install MacTeX: brew install --cask mactex-no-gui"
+        )
+
+    # VLMClient checks model availability in its own __init__,
+    # but we do a quick import check here to catch missing ollama
+    # installation before we've done any image work
+    try:
+        import ollama
+    except ImportError:
+        raise RuntimeError(
+            "ollama package not installed. "
+            "Run: pip install ollama"
+        )
+
 
 def run(
     image_path: str | Path,
@@ -131,26 +153,3 @@ def convert_chunk(
         logger.debug(f"--- END COMPILER ERROR ---")
 
     return None, last_error
-
-
-def check_dependencies(model: str) -> None:
-    """
-    Validates that all external tools are present before starting.
-    Raises clearly rather than failing mid-conversion.
-    """
-    if not is_pdflatex_available():
-        raise RuntimeError(
-            "pdflatex not found on PATH. "
-            "Install MacTeX: brew install --cask mactex-no-gui"
-        )
-
-    # VLMClient checks model availability in its own __init__,
-    # but we do a quick import check here to catch missing ollama
-    # installation before we've done any image work
-    try:
-        import ollama
-    except ImportError:
-        raise RuntimeError(
-            "ollama package not installed. "
-            "Run: pip install ollama"
-        )
