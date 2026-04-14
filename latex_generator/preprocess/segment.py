@@ -96,5 +96,6 @@ def segment(img: np.ndarray, max_chunks: int = 10) -> list[Chunk]:
     Split into equal horizontal strips. Simple and reliable for a first pass.
     """
     h = img.shape[0]
-    split_points = equal_splits(h, max_chunks)
+    #split_points = equal_splits(h, max_chunks)
+    split_points = find_whitespace_splits(h, max_chunks)
     return crop_chunks(img, split_points)
