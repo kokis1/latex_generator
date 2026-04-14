@@ -1,4 +1,4 @@
-PREAMBLE = r"""documentclass[12pt, a4paper]{article}
+PREAMBLE = r"""\documentclass[12pt, a4paper]{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -23,11 +23,11 @@ def build_full_document(body: str) -> str:
     """Assembles a complete compilable .tex string from a body fragment."""
     text = "\n".join([
         PREAMBLE,
-        DOCUMENT_BEGIN,
         DOCUMENT_MAKETITLE,
+        DOCUMENT_BEGIN,
         body,
         DOCUMENT_END,
     ])
 
-    print(f"the text that was attempted to compile was: \n {text}")
+    print(f"the text that was attempted to compile was: \n{text}")
     return text
