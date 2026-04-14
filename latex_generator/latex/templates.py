@@ -28,6 +28,4 @@ def build_full_document(body: str) -> str:
         body,
         DOCUMENT_END,
     ])
-
-    print(f"the text that was attempted to compile was: \n{text}")
     return text
