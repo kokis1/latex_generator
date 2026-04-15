@@ -16,6 +16,7 @@ Critical rules:
 - Drawn figures: % [DIAGRAM: description]
 - If it seems there is text within a drawn figure DO NOT attempt to represent this, just use the  % [DIAGRAM: description] for the whole figure.
 - Illegible content: % [ILLEGIBLE]
+- If whole or part of a line of text is obstructed: % [Obstructed]
 
 Example of correct output:
 \\section{{Newton's Laws}}
