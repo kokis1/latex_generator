@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 from pathlib import Path
 
-def load_grayscale(image_path: str | Path) -> np.ndarray:
+"""def load_grayscale(image_path: str | Path) -> np.ndarray:
    '''Loads the image as a grayscale from the path'''
    image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
    return image
@@ -59,33 +59,84 @@ def save_debug(image: np.ndarray, path: str | Path) -> None:
 
 def load_and_clean(image_path: str | Path, save_image_path: None | str | Path = None) -> np.ndarray:
    '''loads and cleans up the image'''
-   #image = load_grayscale(image_path)
-   #image = binarise(image)
-   image = load_colour(image_path)
+   image = load_grayscale(image_path)
+   image = binarise(image)
    image = deskew(image)
    image = denoise(image)
 
    if save_image_path != None:
       save_debug(image, save_image_path)
 
-   return image
+   return image"""
 
-'''def load_and_clean(image_path: str | Path) -> np.ndarray:
+
+def crop_to_page(img: np.ndarray) -> np.ndarray:
     """
-    Minimal preprocessing — keep the image as close to the original
-    as possible so the VLM can read it. We can add more aggressive
-    preprocessing later once we confirm the VLM can see the content.
+    Detects the largest light-coloured rectangular region (the page)
+    and crops to it. Falls back to the full image if no clear page
+    boundary is found.
+    """
+    # Convert to HSV — easier to isolate light/white regions than in BGR
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    # Mask for light regions: low saturation, high value (brightness)
+    # This captures white and near-white paper regardless of lighting
+    lower = np.array([0, 0, 160])
+    upper = np.array([180, 60, 255])
+    mask = cv2.inRange(hsv, lower, upper)
+
+    # Clean up the mask — close small holes, remove speckle
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (20, 20))
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
+
+    contours, _ = cv2.findContours(
+        mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+    )
+
+    if not contours:
+        return img
+
+    # Take the largest contour — assumed to be the page
+    largest = max(contours, key=cv2.contourArea)
+
+    # Reject if the detected region is less than 20% of the image
+    # (probably noise rather than a real page)
+    image_area = img.shape[0] * img.shape[1]
+    if cv2.contourArea(largest) < image_area * 0.2:
+        return img
+
+    # Get a tight bounding rectangle and crop with a small margin
+    x, y, w, h = cv2.boundingRect(largest)
+    margin = 20
+    x = max(0, x - margin)
+    y = max(0, y - margin)
+    w = min(img.shape[1] - x, w + margin * 2)
+    h = min(img.shape[0] - y, h + margin * 2)
+
+    return img[y:y + h, x:x + w]
+
+
+def resize_if_large(img: np.ndarray, max_dimension: int = 1600) -> np.ndarray:
+    h, w = img.shape[:2]
+    if max(h, w) <= max_dimension:
+        return img
+    scale = max_dimension / max(h, w)
+    return cv2.resize(img, (int(w * scale), int(h * scale)))
+
+
+def load_and_clean(image_path: str | Path) -> np.ndarray:
+    """
+    Load a colour image, crop to the page content, and resize if needed.
     """
     img = cv2.imread(str(image_path), cv2.IMREAD_COLOR)
     if img is None:
         raise ValueError(f"Could not load image at {image_path}")
 
-    # Resize if very large — VLMs don't benefit from huge images
-    # and it slows down inference significantly
-    max_dimension = 1600
-    h, w = img.shape[:2]
-    if max(h, w) > max_dimension:
-        scale = max_dimension / max(h, w)
-        img = cv2.resize(img, (int(w * scale), int(h * scale)))
+    img = crop_to_page(img)
+    img = resize_if_large(img, max_dimension=1600)
 
-    return img'''
+    return img
+
+def save_debug(img: np.ndarray, path: str | Path) -> None:
+    cv2.imwrite(str(path), img)
