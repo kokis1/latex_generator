@@ -7,6 +7,10 @@ def load_grayscale(image_path: str | Path) -> np.ndarray:
    image = cv2.imread(str(image_path), cv2.IMREAD_GRAYSCALE)
    return image
 
+def load_colour(image_path: str | Path) -> np.ndarray:
+   image = cv2.imread(str(image_path), cv2.IMREAD_COLOR_RGB)
+   return image
+
 def binarise(image: np.ndarray) -> np.ndarray:
    '''Finds the black/white cutoff to increase the contrast'''
    _, binary_image = cv2.threshold(
@@ -55,8 +59,9 @@ def save_debug(image: np.ndarray, path: str | Path) -> None:
 
 def load_and_clean(image_path: str | Path, save_image_path: None | str | Path = None) -> np.ndarray:
    '''loads and cleans up the image'''
-   image = load_grayscale(image_path)
-   image = binarise(image)
+   #image = load_grayscale(image_path)
+   #image = binarise(image)
+   image = load_colour(image_path)
    image = deskew(image)
    image = denoise(image)
 

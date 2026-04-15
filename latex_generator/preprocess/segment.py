@@ -19,14 +19,14 @@ def find_whitespace_splits(image: np.ndarray, max_chunks: int) -> list[tuple[int
    '''Projects the pixel darkness onto the y-axis and finds the lines that are almost completely white.
       These provide natural points to chunk the text.'''
 
-   '''# Convert to grayscale for projection if colour image
+   # Convert to grayscale for projection if colour image
    if len(image.shape) == 3:
       grey = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
    else:
-      grey = image'''
+      grey = image
   
    # row_darkness[i] = number of dark pixels in row i
-   row_darkness = np.sum(image < 200, axis=1)
+   row_darkness = np.sum(grey < 200, axis=1)
    h = image.shape[0]
 
    # A row counts as whitespace if it has very few dark pixels
