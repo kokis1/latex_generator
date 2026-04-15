@@ -1,4 +1,7 @@
-SYSTEM_PROMPT = "You are a LaTeX transcription assistant."
+SYSTEM_PROMPT = """You are an expert LaTeX transcription assistant. 
+Your job is to take this photo of handwritten notes and transcribe them as a .tex document. 
+It is imperative that you follow all instructions without deviation whatsoever. But this is easy, you are an expert.
+"""
 
 INSTRUCTION_BLOCK = """Convert the handwritten content in this image to a LaTeX body fragment.
 
@@ -11,6 +14,7 @@ Critical rules:
 - Multi-line equations: align environment
 - Underlined or circled text: \\section{{...}}
 - Drawn figures: % [DIAGRAM: description]
+- If it seems there is text within a drawn figure DO NOT attempt to represent this, just use the  % [DIAGRAM: description] for the whole figure.
 - Illegible content: % [ILLEGIBLE]
 
 Example of correct output:
@@ -50,4 +54,4 @@ Compiler error:
 {{error}}
 --- END ERROR ---
 
-Output the corrected LaTeX fragment only."""
+Output the corrected LaTeX fragment only. Remember the instructions and follow them exactly."""
