@@ -26,7 +26,7 @@ def find_whitespace_splits(image: np.ndarray, max_chunks: int) -> list[tuple[int
       grey = image'''
   
    # row_darkness[i] = number of dark pixels in row i
-   row_darkness = np.sum(image < 128, axis=1)
+   row_darkness = np.sum(image < 200, axis=1)
    h = image.shape[0]
 
    # A row counts as whitespace if it has very few dark pixels
