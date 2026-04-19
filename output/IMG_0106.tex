@@ -1,0 +1,44 @@
+\documentclass[12pt, a4paper]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{parskip}
+\usepackage{microtype}
+
+\geometry{margin=2.5cm}
+
+\title{Converted Notes}
+\author{Reuben Stannah}
+\date{\today}
+\begin{document}
+\maketitle
+\section{MDM Bullet Points}
+\subsection{Slide 11}
+- This in a model aiming to emulate the physics of the metronomes. \\
+- 4 assumptions; List all of them \\
+- First, consider a single metronome on a movable platform \\
+- Modeled as a Van Der Pol oscillator. \\
+- $\epsilon$ is a perimeter that encodes a non-linear term proportional to the square of the speed of the platform. This is used to decay the oscillations with time. \\
+
+
+\subsection{Slide 12}
+- This in extended slightly into \textit{the system} of 2 equations of motion. \\
+- Note that Assumption 4 $\Rightarrow$ the equation of motion of the centre of mass of the system may be found using Newton's $2^{nd}$ Law. \\
+- Full deviation is the technical note but the equation of motion is given by:
+
+\subsection{Slide 13}
+
+- The case \( n=2 \) oscillator model may be extended to an arbitrary amount \\
+- The state vector may be defined as g, such that encoding all angles $\theta_1 \dots \theta_n$ as well as x. \\
+- M, G, \& C are matrices where elements are functions of q and its derivatives. \\
+- This allows whole system to be written using the equation \( S = f(\mathbf{q}, \vdot{\mathbf{q}}) \). \\
+- Hence numerical methods, we used RK4 for its simplicity and flexibility, may be used to investigate and plot the effects of different control strategies. \\
+
+\subsection{Slide 14}
+
+- These are M, C, G and T; full derivations in handwritten note. \\
+
+\end{document}
